@@ -1,0 +1,227 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model user {
+  id        Int         @id @default(autoincrement())
+  name      String?
+  email     String?
+  phone     String      @unique
+  password  String?
+  mpin      String?
+  role      Role        @default(reporter)
+  status    UserStatus  @default(inactive)
+  createdAt DateTime    @default(now())
+  auditLogs audit_log[]
+  reporter  reporter?
+  comments  comment[]
+}
+
+model country {
+  id        Int        @id @default(autoincrement())
+  name      String
+  code      String?
+  reporters reporter[]
+  states    state[]
+}
+
+model state {
+  id        Int        @id @default(autoincrement())
+  name      String
+  code      String?
+  countryId Int
+  articles  article[]
+  districts district[]
+  reporters reporter[]
+  country   country    @relation(fields: [countryId], references: [id])
+}
+
+model district {
+  id             Int            @id @default(autoincrement())
+  name           String
+  stateId        Int
+  articles       article[]
+  constituencies constituency[]
+  state          state          @relation(fields: [stateId], references: [id])
+  reporters      reporter[]
+}
+
+model constituency {
+  id         Int        @id @default(autoincrement())
+  name       String
+  districtId Int
+  articles   article[]
+  district   district   @relation(fields: [districtId], references: [id])
+  mandals    mandal[]
+  reporters  reporter[]
+}
+
+model mandal {
+  id             Int          @id @default(autoincrement())
+  name           String
+  constituencyId Int
+  articles       article[]
+  constituency   constituency @relation(fields: [constituencyId], references: [id])
+  reporters      reporter[]
+}
+
+model reporter {
+  id              Int            @id @default(autoincrement())
+  userId          Int            @unique
+  level           ReporterLevel
+  parentId        Int?
+  countryId       Int
+  stateId         Int
+  districtId      Int?
+  constituencyId  Int?
+  mandalId        Int?
+  autoLive        Boolean        @default(false)
+  paymentDue      Boolean        @default(true)
+  profilePhotoUrl String?
+  idCardUrl       String?
+  joiningDate     DateTime       @default(now())
+  joiningFee      Decimal?
+  monthlyFee      Decimal?
+  articles        article[]
+  payments        payment[]
+  constituency    constituency?  @relation(fields: [constituencyId], references: [id])
+  country         country        @relation(fields: [countryId], references: [id])
+  district        district?      @relation(fields: [districtId], references: [id])
+  mandal          mandal?        @relation(fields: [mandalId], references: [id])
+  parent          reporter?      @relation("ReporterHierarchy", fields: [parentId], references: [id])
+  children        reporter[]     @relation("ReporterHierarchy")
+  state           state          @relation(fields: [stateId], references: [id])
+  user            user           @relation(fields: [userId], references: [id])
+  subscriptions   subscription[]
+}
+
+model article {
+  id             Int           @id @default(autoincrement())
+  reporterId     Int
+  title          String
+  slug           String        @unique
+  content        String
+  imageUrl       String?
+  languageCode   String?       @db.VarChar(10)
+  language       languages?    @relation(fields: [languageCode], references: [code])
+  stateId        Int?
+  districtId     Int?
+  constituencyId Int?
+  mandalId       Int?
+  villageName    String?
+  latitude       Decimal?
+  longitude      Decimal?
+  isLive         Boolean       @default(false)
+  createdAt      DateTime      @default(now())
+  metaTitle      String
+  metaDescription String
+  keywords       String[]
+  constituency   constituency? @relation(fields: [constituencyId], references: [id])
+  district       district?     @relation(fields: [districtId], references: [id])
+  mandal         mandal?       @relation(fields: [mandalId], references: [id])
+  reporter       reporter      @relation(fields: [reporterId], references: [id])
+  state          state?        @relation(fields: [stateId], references: [id])
+  comments       comment[]
+}
+
+model comment {
+  id        Int      @id @default(autoincrement())
+  content   String
+  articleId Int
+  userId    Int
+  createdAt DateTime @default(now())
+  article   article  @relation(fields: [articleId], references: [id])
+  user      user     @relation(fields: [userId], references: [id])
+}
+
+model category {
+  id       Int        @id @default(autoincrement())
+  name     String
+  parentId Int?
+  parent   category?  @relation("ParentCategory", fields: [parentId], references: [id])
+  children category[] @relation("ParentCategory")
+}
+
+model payment {
+  id               Int           @id @default(autoincrement())
+  reporterId       Int
+  amount           Decimal?
+  status           PaymentStatus @default(unpaid)
+  paidOn           DateTime?
+  monthFor         DateTime?
+  paymentMethod    String?
+  paymentReference String?
+  reporter         reporter      @relation(fields: [reporterId], references: [id])
+}
+
+model subscription {
+  id                    Int                @id @default(autoincrement())
+  reporterId            Int
+  planName              String
+  amount                Decimal?
+  startDate             DateTime
+  endDate               DateTime
+  status                SubscriptionStatus @default(active)
+  phonepeSubscriptionId String?
+  nextPaymentDate       DateTime?
+  reporter              reporter           @relation(fields: [reporterId], references: [id])
+}
+
+model audit_log {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  action    String
+  details   String?
+  timestamp DateTime @default(now())
+  user      user     @relation(fields: [userId], references: [id])
+}
+
+model otp_log {
+  id        Int      @id @default(autoincrement())
+  phone     String
+  otp       String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model languages {
+  id        Int       @id @default(autoincrement())
+  code      String    @unique @db.VarChar(10)
+  name      String    @db.VarChar(50)
+  articles  article[]
+}
+
+enum Role {
+  admin
+  desk
+  reporter
+}
+
+enum UserStatus {
+  active
+  inactive
+}
+
+enum ReporterLevel {
+  BUREAU_REPORTER
+  STAFF_REPORTER
+  CRIME_REPORTER
+  RC_INCHARGE
+  REPORTER
+}
+
+enum PaymentStatus {
+  paid
+  unpaid
+  failed
+}
+
+enum SubscriptionStatus {
+  active
+  expired
+}
