@@ -48,6 +48,10 @@ export class CreateReporterDto {
   parentId?: number;
 
   @IsInt()
+  @IsOptional()
+  parentUserId?: number;
+
+  @IsInt()
   countryId: number;
 
   @IsInt()

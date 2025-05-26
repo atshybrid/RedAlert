@@ -46,26 +46,20 @@ export class CreateArticleDto {
   @IsString({ each: true })
   keywords: string[];
 
-  // Location fields - required for citizen posts
-  @ValidateIf((o) => !o.countryId && !o.stateId)
+  @IsOptional()
   @IsLatitude()
   latitude?: number;
 
-  @ValidateIf((o) => !o.countryId && !o.stateId)
+  @IsOptional()
   @IsLongitude()
   longitude?: number;
 
-  // Location fields - required for desk team
-  @ValidateIf((o) => o.role === Role.desk)
-  @IsNumber()
-  countryId?: number;
-
-  @ValidateIf((o) => o.role === Role.desk)
+  @IsOptional()
   @IsNumber()
   stateId?: number;
 
-  @IsNumber()
   @IsOptional()
+  @IsNumber()
   districtId?: number;
 
   @IsNumber()

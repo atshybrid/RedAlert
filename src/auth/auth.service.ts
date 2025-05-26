@@ -44,17 +44,11 @@ export class AuthService {
         },
       });
 
-      const token = await this.jwtService.generateToken({
-        userId: user.id,
-        phone: user.phone,
-      });
-
       return ResponseUtil.success(
         {
           userId: user.id,
           phone: user.phone,
           name: user.name,
-          token,
         },
         "User registered successfully",
         201

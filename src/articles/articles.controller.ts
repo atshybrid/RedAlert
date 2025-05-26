@@ -23,7 +23,7 @@ export class ArticlesController {
   @Post()
   @UseGuards(JwtAuthGuard)
   async create(@Request() req, @Body() createArticleDto: CreateArticleDto) {
-    return this.articlesService.create(req.user.id, createArticleDto);
+    return this.articlesService.create(req.user.userId, createArticleDto);
   }
 
   @Get()
@@ -36,7 +36,7 @@ export class ArticlesController {
 
   @Put(":id/status")
   @UseGuards(JwtAuthGuard)
-  @Roles(Role.desk, Role.admin)
+  @Roles(Role.desk, Role.admin, Role.reporter)
   async updateStatus(
     @Param("id") id: string,
     @Request() req,

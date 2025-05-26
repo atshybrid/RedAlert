@@ -39,12 +39,7 @@ export class ReportersController {
       req.user.userId,
       createReporterDto
     );
-    return {
-      message: "Reporter created successfully",
-      statusCode: HttpStatus.CREATED,
-      success: true,
-      data: reporter,
-    };
+    return reporter;
   }
 
   @Get(":id")

@@ -42,14 +42,12 @@ export class ArticlesService {
       if (createArticleDto.latitude && createArticleDto.longitude) {
         locationData.latitude = createArticleDto.latitude;
         locationData.longitude = createArticleDto.longitude;
-      } else {
-        locationData.countryId = createArticleDto.countryId;
-        locationData.stateId = createArticleDto.stateId;
-        locationData.districtId = createArticleDto.districtId;
-        locationData.constituencyId = createArticleDto.constituencyId;
-        locationData.mandalId = createArticleDto.mandalId;
-        locationData.villageName = createArticleDto.villageName;
       }
+      locationData.stateId = createArticleDto.stateId;
+      locationData.districtId = createArticleDto.districtId;
+      locationData.constituencyId = createArticleDto.constituencyId;
+      locationData.mandalId = createArticleDto.mandalId;
+      locationData.villageName = createArticleDto.villageName;
 
       const article = await this.prisma.article.create({
         data: {
@@ -70,6 +68,7 @@ export class ArticlesService {
             include: {
               user: {
                 select: {
+                  id: true,
                   name: true,
                 },
               },
@@ -141,23 +140,30 @@ export class ArticlesService {
       const existingArticle = await this.prisma.article.findUnique({
         where: { id },
       });
+      const currentUser = await this.prisma.user.findUnique({
+        where: { id: userId },
+      });
 
       if (!existingArticle) {
         return ResponseUtil.error("Article not found", 404);
       }
 
-      const user = await this.prisma.user.findFirst({
-        where: { id: userId },
+      const user = await this.prisma.reporter.findFirst({
+        where: { id: existingArticle.reporterId },
       });
 
       if (!user) {
         return ResponseUtil.error("User not found", 404);
       }
 
-      if (user.role !== Role.desk && user.role !== Role.admin) {
+      if (
+        userId !== user?.parentId &&
+        currentUser.role !== Role.desk &&
+        currentUser.role !== Role.admin
+      ) {
         return ResponseUtil.error(
-          "Unauthorized: Only desk and admin users can update article status",
-          403
+          "Only desk, admin users and parent user can update article status",
+          404
         );
       }
 

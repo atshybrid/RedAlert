@@ -41,15 +41,15 @@ export class ReportersService {
 
       case "STAFF_REPORTER":
       case "CRIME_REPORTER":
-        if (!dto.districtId || dto.constituencyId || dto.mandalId) {
+        if (!dto.districtId || !dto.constituencyId || !dto.mandalId) {
           throw new BadRequestException(
-            "Staff/Crime Reporter should have country, state, and district"
+            "Staff/Crime Reporter should have country, state, district and mandalId"
           );
         }
         break;
 
       case "RC_INCHARGE":
-        if (!dto.districtId || !dto.constituencyId || dto.mandalId) {
+        if (!dto.districtId || !dto.constituencyId || !dto.mandalId) {
           throw new BadRequestException(
             "RC Incharge should have country, state, district, and constituency"
           );
@@ -131,14 +131,6 @@ export class ReportersService {
           user: true,
         },
       });
-      console.log(creator, "creatorcreator", creatorUserId);
-      if (!creator) {
-        return ResponseUtil.error(
-          "Only existing reporters can create new reporters",
-          403
-        );
-      }
-
       if (
         !this.canCreateReporterOfLevel(
           creator.level as ReporterLevel,
@@ -165,11 +157,12 @@ export class ReportersService {
         if (!parent) {
           return ResponseUtil.error("Parent reporter not found", 404);
         }
-
+        console.log(parent, "parentparentparent");
         this.validateParentChildRelationship(
           dto.level as ReporterLevel,
           parent.level as ReporterLevel
         );
+        dto.parentUserId = parent.userId;
       }
 
       const user = await this.prisma.user.create({
@@ -186,7 +179,7 @@ export class ReportersService {
         data: {
           userId: user.id,
           level: dto.level,
-          parentId: dto.parentId,
+          parentId: dto.parentUserId,
           countryId: dto.countryId,
           stateId: dto.stateId,
           districtId: dto.districtId,
