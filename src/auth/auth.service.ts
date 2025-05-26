@@ -69,6 +69,9 @@ export class AuthService {
     try {
       const user = await this.prisma.user.findUnique({
         where: { phone: dto.phone },
+        include: {
+          reporter: true,
+        },
       });
 
       if (!user) {
@@ -88,17 +91,7 @@ export class AuthService {
         userId: user.id,
         phone: user.phone,
       });
-
-      return ResponseUtil.success(
-        {
-          userId: user.id,
-          phone: user.phone,
-          name: user.name,
-          token,
-        },
-        "Login successful",
-        200
-      );
+      return ResponseUtil.success({ ...user, token }, "Login successful", 200);
     } catch (error) {
       this.logger.error("Failed to login", error.stack);
       return ResponseUtil.error("Failed to login", 500);
