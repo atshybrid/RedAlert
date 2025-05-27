@@ -11,8 +11,25 @@ import {
   IsEnum,
   ValidateIf,
   IsNotEmpty,
+  Matches,
 } from "class-validator";
 import { Role } from "@prisma/client";
+
+// Supported language codes
+export enum LanguageCode {
+  EN = "en", // English
+  HI = "hi", // Hindi
+  TE = "te", // Telugu
+  TA = "ta", // Tamil
+  ML = "ml", // Malayalam
+  KN = "kn", // Kannada
+  BN = "bn", // Bengali
+  MR = "mr", // Marathi
+  GU = "gu", // Gujarati
+  PA = "pa", // Punjabi
+  OR = "or", // Odia
+  UR = "ur", // Urdu
+}
 
 export class CreateArticleDto {
   @IsString()
@@ -27,9 +44,12 @@ export class CreateArticleDto {
   @IsOptional()
   imageUrl?: string;
 
-  @IsString()
   @IsNotEmpty()
-  languageCode: string;
+  @IsEnum(LanguageCode, {
+    message:
+      "Invalid language code. Must be one of: en, gu, hi, te, ta, ml, kn, ar",
+  })
+  languageCode: LanguageCode;
 
   // SEO Fields (mandatory)
   @IsString()

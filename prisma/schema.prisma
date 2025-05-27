@@ -87,6 +87,8 @@ model reporter {
   joiningDate     DateTime       @default(now())
   joiningFee      Decimal?
   monthlyFee      Decimal?
+  kyc_verification Boolean       @default(false)
+  kyc_data        Json?
   articles        article[]
   payments        payment[]
   constituency    constituency?  @relation(fields: [constituencyId], references: [id])
