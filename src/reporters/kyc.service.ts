@@ -39,9 +39,9 @@ export class KycService {
         return ResponseUtil.error("Reporter not found", 404);
       }
 
-      if (reporter.kyc_verification) {
-        return ResponseUtil.error("KYC already verified", 400);
-      }
+      // if (reporter.kyc_verification) {
+      //   return ResponseUtil.error("KYC already verified", 400);
+      // }
 
       const response = await firstValueFrom(
         this.httpService.post(
@@ -57,7 +57,7 @@ export class KycService {
       );
 
       return ResponseUtil.success(
-        { client_id: response.data.client_id },
+        response.data.data,
         "OTP generated successfully"
       );
     } catch (error) {
@@ -82,9 +82,9 @@ export class KycService {
         return ResponseUtil.error("Reporter not found", 404);
       }
 
-      if (reporter.kyc_verification) {
-        return ResponseUtil.error("KYC already verified", 400);
-      }
+      // if (reporter.kyc_verification) {
+      //   return ResponseUtil.error("KYC already verified", 400);
+      // }
 
       const response = await firstValueFrom(
         this.httpService.post(
@@ -107,7 +107,7 @@ export class KycService {
         where: { id: reporterId },
         data: {
           kyc_verification: true,
-          kyc_data: response.data,
+          kyc_data: response.data.data,
         },
       });
 
