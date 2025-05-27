@@ -78,6 +78,10 @@ export class CreateArticleDto {
   @IsNumber()
   stateId?: number;
 
+  @IsNumber()
+  @IsNotEmpty()
+  countryId: number;
+
   @IsOptional()
   @IsNumber()
   districtId?: number;
@@ -88,6 +92,9 @@ export class CreateArticleDto {
 
   @IsOptional()
   isLive?: boolean;
+
+  @IsOptional()
+  isBreaking: boolean;
 
   @IsNumber()
   @IsOptional()

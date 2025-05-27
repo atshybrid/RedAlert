@@ -119,6 +119,7 @@ model article {
   latitude       Decimal?
   longitude      Decimal?
   isLive         Boolean       @default(false)
+  isBreaking     Boolean       @default(false)
   createdAt      DateTime      @default(now())
   metaTitle      String
   metaDescription String

@@ -317,10 +317,11 @@ export class ArticlesService {
           metaTitle: createArticleDto.metaTitle,
           metaDescription: createArticleDto.metaDescription,
           keywords: createArticleDto.keywords,
-          ...locationData,
           slug,
           reporterId: user.reporter?.id,
           isLive: user.reporter?.autoLive || false,
+          isBreaking: createArticleDto?.isBreaking,
+          ...locationData,
         },
         include: {
           reporter: {
