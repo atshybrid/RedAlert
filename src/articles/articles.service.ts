@@ -1,10 +1,6 @@
-import {
-  Injectable,
-  BadRequestException,
-  NotFoundException,
-  Logger,
-} from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
+import { transliterate } from "transliteration";
 import { CreateArticleDto, LanguageCode } from "./dto/create-article.dto";
 import { Role, Prisma } from "@prisma/client";
 import slugify from "slugify";
@@ -14,238 +10,38 @@ import { ResponseUtil } from "../common/utils/response.util";
 @Injectable()
 export class ArticlesService {
   private readonly logger = new Logger(ArticlesService.name);
-
-  // Language specific transliteration maps
-  private readonly transliterationMap = {
-    [LanguageCode.HI]: {
-      अ: "a",
-      आ: "aa",
-      इ: "i",
-      ई: "ee",
-      उ: "u",
-      ऊ: "oo",
-      ए: "e",
-      ऐ: "ai",
-      ओ: "o",
-      औ: "au",
-      क: "k",
-      ख: "kh",
-      ग: "g",
-      घ: "gh",
-      ङ: "ng",
-      च: "ch",
-      छ: "chh",
-      ज: "j",
-      झ: "jh",
-      ञ: "ny",
-      ट: "t",
-      ठ: "th",
-      ड: "d",
-      ढ: "dh",
-      ण: "n",
-      त: "t",
-      थ: "th",
-      द: "d",
-      ध: "dh",
-      न: "n",
-      प: "p",
-      फ: "ph",
-      ब: "b",
-      भ: "bh",
-      म: "m",
-      य: "y",
-      र: "r",
-      ल: "l",
-      व: "v",
-      श: "sh",
-      ष: "sh",
-      स: "s",
-      ह: "h",
-      "ा": "a",
-      "ि": "i",
-      "ी": "ee",
-      "ु": "u",
-      "ू": "oo",
-      "े": "e",
-      "ै": "ai",
-      "ो": "o",
-      "ौ": "au",
-      "ं": "n",
-      "ः": "h",
-      "्": "",
-      ज़: "z",
-      फ़: "f",
-    },
-    [LanguageCode.GU]: {
-      અ: "a",
-      આ: "aa",
-      ઇ: "i",
-      ઈ: "ee",
-      ઉ: "u",
-      ઊ: "oo",
-      એ: "e",
-      ઐ: "ai",
-      ઓ: "o",
-      ઔ: "au",
-      ક: "k",
-      ખ: "kh",
-      ગ: "g",
-      ઘ: "gh",
-      ઙ: "ng",
-      ચ: "ch",
-      છ: "chh",
-      જ: "j",
-      ઝ: "jh",
-      ઞ: "ny",
-      ટ: "t",
-      ઠ: "th",
-      ડ: "d",
-      ઢ: "dh",
-      ણ: "n",
-      ત: "t",
-      થ: "th",
-      દ: "d",
-      ધ: "dh",
-      ન: "n",
-      પ: "p",
-      ફ: "ph",
-      બ: "b",
-      ભ: "bh",
-      મ: "m",
-      ય: "y",
-      ર: "r",
-      લ: "l",
-      વ: "v",
-      શ: "sh",
-      ષ: "sh",
-      સ: "s",
-      હ: "h",
-      "ા": "a",
-      "િ": "i",
-      "ી": "ee",
-      "ુ": "u",
-      "ૂ": "oo",
-      "ે": "e",
-      "ૈ": "ai",
-      "ો": "o",
-      "ૌ": "au",
-      "ં": "n",
-      "ઃ": "h",
-      "્": "",
-    },
-    [LanguageCode.TE]: {
-      అ: "a",
-      ఆ: "aa",
-      ఇ: "i",
-      ఈ: "ee",
-      ఉ: "u",
-      ఊ: "oo",
-      ఎ: "e",
-      ఏ: "e",
-      ఐ: "ai",
-      ఒ: "o",
-      ఓ: "o",
-      ఔ: "au",
-      క: "ka",
-      ఖ: "kha",
-      గ: "ga",
-      ఘ: "gha",
-      ఙ: "nga",
-      చ: "cha",
-      ছ: "chha",
-      జ: "ja",
-      ఝ: "jha",
-      ఞ: "nya",
-      ట: "ta",
-      ఠ: "tha",
-      డ: "da",
-      ఢ: "dha",
-      ణ: "na",
-      త: "ta",
-      థ: "tha",
-      ద: "da",
-      ధ: "dha",
-      న: "na",
-      ప: "pa",
-      ఫ: "pha",
-      బ: "ba",
-      భ: "bha",
-      మ: "ma",
-      య: "ya",
-      ర: "ra",
-      ల: "la",
-      వ: "va",
-      శ: "sha",
-      ష: "sha",
-      స: "sa",
-      హ: "ha",
-      ళ: "la",
-      "ా": "a",
-      "ి": "i",
-      "ీ": "ee",
-      "ు": "u",
-      "ూ": "oo",
-      "ె": "e",
-      "ే": "e",
-      "ై": "ai",
-      "ొ": "o",
-      "ో": "o",
-      "ౌ": "au",
-      "ం": "m",
-      "ః": "h",
-      "్": "",
-      "ఁ": "",
-      "ృ": "ru",
-    },
-  };
-
   constructor(private prisma: PrismaService) {}
 
-  private transliterate(text: string, languageCode: LanguageCode): string {
-    // If it's English, return as is
-    if (languageCode === LanguageCode.EN) {
-      return text;
-    }
+  private async translateToEnglish(
+    text: string,
+    languageCode: LanguageCode
+  ): Promise<string> {
+    if (languageCode === LanguageCode.EN) return text;
 
-    // Get the transliteration map for the language
-    const map = this.transliterationMap[languageCode];
-    if (!map) {
-      // If no transliteration map exists, use slugify's default behavior
-      this.logger.warn(
-        `No transliteration map for language ${languageCode}, using text as is`
-      );
-      return text;
-    }
-
-    // Transliterate character by character
-    let result = "";
-    for (let i = 0; i < text.length; i++) {
-      const char = text[i];
-      result += map[char] || char;
-    }
-
-    // Clean up any double spaces and trim
-    result = result.replace(/\s+/g, " ").trim();
-
-    this.logger.debug(`Transliterated "${text}" to "${result}"`);
-    return result;
+    // Replace this with real API integration
+    // E.g., Google Translate API call here
+    const translated = transliterate(text); // <-- implement this
+    this.logger.debug(`Translated "${text}" to "${translated}"`);
+    return translated;
   }
 
   private async generateUniqueSlug(
     originalText: string,
     languageCode: LanguageCode
   ): Promise<string> {
-    // First transliterate the text to English
-    const transliteratedText = this.transliterate(originalText, languageCode);
+    // Translate the text to English
+    const translatedText = await this.translateToEnglish(
+      originalText,
+      languageCode
+    );
 
-    // Create a base slug without any numbers
-    let baseSlug = slugify(transliteratedText, {
-      lower: true, // Convert to lowercase
-      strict: true, // Strip special characters except replacement
-      trim: true, // Trim leading and trailing replacement chars
+    // Create a slug from translated English text
+    let baseSlug = slugify(translatedText, {
+      lower: true,
+      strict: true,
+      trim: true,
     });
 
-    // Check if this slug already exists
     let slug = baseSlug;
     let counter = 0;
 
@@ -254,12 +50,7 @@ export class ArticlesService {
         where: { slug },
       });
 
-      if (!existingArticle) {
-        // If no article exists with this slug, we can use it
-        break;
-      }
-
-      // If slug exists, append counter and try again
+      if (!existingArticle) break;
       counter++;
       slug = `${baseSlug}-${counter}`;
     }
