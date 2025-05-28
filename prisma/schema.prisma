@@ -89,6 +89,8 @@ model reporter {
   monthlyFee      Decimal?
   kyc_verification Boolean       @default(false)
   kyc_data        Json?
+  isApprovedByAdmin Boolean      @default(false)
+  subscribed      Boolean        @default(false)
   articles        article[]
   payments        payment[]
   constituency    constituency?  @relation(fields: [constituencyId], references: [id])
