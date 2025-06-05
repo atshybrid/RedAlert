@@ -8,6 +8,7 @@ import { PrismaModule } from "./prisma/prisma.module";
 import { UtilityModule } from "./utility/utility.module";
 import { ReportersModule } from "./reporters/reporters.module";
 import { ArticlesModule } from "./articles/articles.module";
+import { PaymentsModule } from "./payments/payments.module";
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { ArticlesModule } from "./articles/articles.module";
     UtilityModule,
     ReportersModule,
     ArticlesModule,
+    PaymentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
