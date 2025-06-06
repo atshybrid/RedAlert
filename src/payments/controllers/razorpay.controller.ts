@@ -11,7 +11,7 @@ import {
 import { JwtAuthGuard } from "../../auth/guards/jwt-auth.guard";
 import { RazorpayService } from "../services/razorpay.service";
 import { RazorpaySubscriptionDto } from "../dto/razorpay-subscription.dto";
-import { IResponse } from "../../types";
+import { IResponse } from "../../types/index";
 import { ResponseUtil } from "../../common/utils/response.util";
 
 @Controller("payments/razorpay")
@@ -27,7 +27,7 @@ export class RazorpayController {
     @Body() dto: RazorpaySubscriptionDto
   ): Promise<IResponse> {
     try {
-      const reporterId = req.user.reporter?.id;
+      const reporterId = req.user.userId;
       if (!reporterId) {
         return ResponseUtil.error("Reporter not found", 404);
       }

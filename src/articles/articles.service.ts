@@ -4,7 +4,7 @@ import { transliterate } from "transliteration";
 import { CreateArticleDto, LanguageCode } from "./dto/create-article.dto";
 import { Role, Prisma } from "@prisma/client";
 import slugify from "slugify";
-import { IResponse } from "../types";
+import { IResponse } from "../types/index";
 import { ResponseUtil } from "../common/utils/response.util";
 
 @Injectable()

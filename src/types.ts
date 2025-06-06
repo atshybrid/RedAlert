@@ -1,6 +1,3 @@
-export interface IResponse<T = unknown> {
-  message: string;
-  statusCode: number;
-  success: boolean;
-  data?: T;
-}
+// This file is deprecated. Use src/types/index.ts instead.
+// Keeping this file temporarily for backward compatibility.
+export { IResponse } from "./types/index";

@@ -4,7 +4,7 @@ import { ConfigService } from "@nestjs/config";
 import { PrismaService } from "../prisma/prisma.service";
 import { GenerateOtpDto, VerifyOtpDto } from "./dto/kyc-verification.dto";
 import { firstValueFrom } from "rxjs";
-import { IResponse } from "../types";
+import { IResponse } from "../types/index";
 import { ResponseUtil } from "../common/utils/response.util";
 
 @Injectable()

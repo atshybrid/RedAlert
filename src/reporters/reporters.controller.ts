@@ -12,9 +12,10 @@ import {
 import { ReportersService } from "./reporters.service";
 import { CreateReporterDto } from "./dto/create-reporter.dto";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
-import { IResponse } from "../types";
+import { IResponse } from "../types/index";
 import { KycService } from "./kyc.service";
 import { GenerateOtpDto, VerifyOtpDto } from "./dto/kyc-verification.dto";
+import { ResponseUtil } from "../common/utils/response.util";
 
 @Controller("api/reporters")
 @UseGuards(JwtAuthGuard)
@@ -26,13 +27,7 @@ export class ReportersController {
 
   @Get()
   async findAll(): Promise<IResponse> {
-    const reporters = await this.reportersService.findAll();
-    return {
-      message: "Reporters retrieved successfully",
-      statusCode: HttpStatus.OK,
-      success: true,
-      data: reporters,
-    };
+    return this.reportersService.findAll();
   }
 
   @Post()
@@ -49,13 +44,7 @@ export class ReportersController {
 
   @Get(":id")
   async findOne(@Param("id", ParseIntPipe) id: number): Promise<IResponse> {
-    const reporter = await this.reportersService.findOne(id);
-    return {
-      message: "Reporter retrieved successfully",
-      statusCode: HttpStatus.OK,
-      success: true,
-      data: reporter,
-    };
+    return this.reportersService.findOne(id);
   }
 
   @Get(":id/idcard")
@@ -63,12 +52,7 @@ export class ReportersController {
     @Param("id", ParseIntPipe) id: number
   ): Promise<IResponse> {
     const idCard = await this.reportersService.getIdCardDetails(id);
-    return {
-      message: "ID card generated successfully",
-      statusCode: HttpStatus.OK,
-      success: true,
-      data: idCard,
-    };
+    return ResponseUtil.success(idCard, "ID card generated successfully");
   }
 
   @Post(":id/kyc/generate-otp")

@@ -8,7 +8,7 @@ import { CheckMpinDto } from "./dto/check-mpin.dto";
 import { WhatsappService } from "../utility/whatsapp.service";
 import { JwtService } from "./jwt.service";
 import { Role, UserStatus } from "@prisma/client";
-import { IResponse } from "../types";
+import { IResponse } from "../types/index";
 import { ResponseUtil } from "../common/utils/response.util";
 import * as bcrypt from "bcrypt";
 

@@ -1,4 +1,4 @@
-import { IResponse } from "../../types";
+import { IResponse } from "../../types/index";
 
 export class ResponseUtil {
   static success<T>(
@@ -14,7 +14,7 @@ export class ResponseUtil {
     };
   }
 
-  static error<T = Record<string, never>>(
+  static error<T = any>(
     message: string = "Operation failed",
     statusCode: number = 500,
     data: T = {} as T

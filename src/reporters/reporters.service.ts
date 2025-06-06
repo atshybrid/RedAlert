@@ -8,7 +8,7 @@ import {
 import { PrismaService } from "../prisma/prisma.service";
 import { CreateReporterDto } from "./dto/create-reporter.dto";
 import { Prisma, Role, UserStatus } from "@prisma/client";
-import { IResponse } from "../types";
+import { IResponse } from "../types/index";
 import { ResponseUtil } from "../common/utils/response.util";
 
 type ReporterLevel =

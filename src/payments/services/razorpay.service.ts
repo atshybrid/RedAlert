@@ -1,6 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { IResponse } from "../../types";
+import { IResponse } from "../../types/index";
 import { ResponseUtil } from "../../common/utils/response.util";
 import { RazorpaySubscriptionDto } from "../dto/razorpay-subscription.dto";
 import { PrismaService } from "../../prisma/prisma.service";
