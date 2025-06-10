@@ -84,6 +84,7 @@ export class AuthService {
       const token = await this.jwtService.generateToken({
         userId: user.id,
         phone: user.phone,
+        role: user.role,
       });
       return ResponseUtil.success({ ...user, token }, "Login successful", 200);
     } catch (error) {

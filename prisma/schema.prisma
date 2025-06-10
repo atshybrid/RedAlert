@@ -229,4 +229,5 @@ enum PaymentStatus {
 enum SubscriptionStatus {
   active
   expired
+  paused
 }

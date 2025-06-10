@@ -8,6 +8,7 @@ export class JwtService {
   async generateToken(payload: {
     userId: number;
     phone: string;
+    role: string;
   }): Promise<string> {
     return this.jwtService.sign(payload);
   }

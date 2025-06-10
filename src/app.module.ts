@@ -9,6 +9,7 @@ import { UtilityModule } from "./utility/utility.module";
 import { ReportersModule } from "./reporters/reporters.module";
 import { ArticlesModule } from "./articles/articles.module";
 import { PaymentsModule } from "./payments/payments.module";
+import { LocationsModule } from "./locations/locations.module";
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { PaymentsModule } from "./payments/payments.module";
     ReportersModule,
     ArticlesModule,
     PaymentsModule,
+    LocationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
