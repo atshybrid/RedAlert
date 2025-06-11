@@ -10,7 +10,7 @@ import { ReportersModule } from "./reporters/reporters.module";
 import { ArticlesModule } from "./articles/articles.module";
 import { PaymentsModule } from "./payments/payments.module";
 import { LocationsModule } from "./locations/locations.module";
-
+console.log("Updated code check");
 @Module({
   imports: [
     HttpModule,
