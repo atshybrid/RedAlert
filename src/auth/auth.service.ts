@@ -86,6 +86,8 @@ export class AuthService {
         phone: user.phone,
         role: user.role,
       });
+      console.log("login successful", user);
+
       return ResponseUtil.success({ ...user, token }, "Login successful", 200);
     } catch (error) {
       this.logger.error("Failed to login", error.stack);
