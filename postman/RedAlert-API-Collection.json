@@ -1,0 +1,470 @@
+{
+  "info": {
+    "name": "RedAlert API Collection",
+    "description": "Complete API collection for RedAlert news platform",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "local",
+      "value": "http://localhost:3004",
+      "type": "string"
+    },
+    {
+      "key": "staging",
+      "value": "https://app.hrcitodaynews.in",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Doe\",\n  \"phone\": \"9876543210\",\n  \"email\": \"john.doe@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{local}}/api/auth/register",
+              "host": ["{{local}}"],
+              "path": ["api", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"9876543210\",\n  \"mpin\": \"123456\"\n}"
+            },
+            "url": {
+              "raw": "{{local}}/api/auth/login",
+              "host": ["{{local}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Request OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"9876543210\"\n}"
+            },
+            "url": {
+              "raw": "{{local}}/api/auth/request-otp",
+              "host": ["{{local}}"],
+              "path": ["api", "auth", "request-otp"]
+            }
+          }
+        },
+        {
+          "name": "Set MPIN",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"9876543210\",\n  \"otp\": \"123456\",\n  \"mpin\": \"654321\"\n}"
+            },
+            "url": {
+              "raw": "{{local}}/api/auth/set-mpin",
+              "host": ["{{local}}"],
+              "path": ["api", "auth", "set-mpin"]
+            }
+          }
+        },
+        {
+          "name": "Check MPIN Status",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"9876543210\"\n}"
+            },
+            "url": {
+              "raw": "{{local}}/api/auth/check-mpin",
+              "host": ["{{local}}"],
+              "path": ["api", "auth", "check-mpin"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "Create Guest Subscription",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"9888888888\",\n  \"name\": \"Guest User\",\n  \"amount\": 50000,\n  \"period\": 1\n}"
+            },
+            "url": {
+              "raw": "{{local}}/payments/razorpay/guest-subscription",
+              "host": ["{{local}}"],
+              "path": ["payments", "razorpay", "guest-subscription"]
+            }
+          }
+        },
+        {
+          "name": "Create Subscription (Authenticated)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 50000,\n  \"period\": 1,\n  \"notes\": \"Monthly subscription for reporter\"\n}"
+            },
+            "url": {
+              "raw": "{{local}}/payments/razorpay/subscription",
+              "host": ["{{local}}"],
+              "path": ["payments", "razorpay", "subscription"]
+            }
+          }
+        },
+        {
+          "name": "Check Subscription Status",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"9876543210\"\n}"
+            },
+            "url": {
+              "raw": "{{local}}/payments/razorpay/check-subscription-status",
+              "host": ["{{local}}"],
+              "path": ["payments", "razorpay", "check-subscription-status"]
+            }
+          }
+        },
+        {
+          "name": "Get Subscription Details",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{local}}/payments/razorpay/subscription/:id",
+              "host": ["{{local}}"],
+              "path": ["payments", "razorpay", "subscription", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "sub_xxxxx"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Cancel Subscription",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cancelAtCycleEnd\": true\n}"
+            },
+            "url": {
+              "raw": "{{local}}/payments/razorpay/subscription/:id/cancel",
+              "host": ["{{local}}"],
+              "path": ["payments", "razorpay", "subscription", ":id", "cancel"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "sub_xxxxx"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Verify Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"razorpay_payment_id\": \"pay_xxxxx\",\n  \"razorpay_subscription_id\": \"sub_xxxxx\",\n  \"razorpay_signature\": \"signature_xxxxx\"\n}"
+            },
+            "url": {
+              "raw": "{{local}}/payments/razorpay/verify-payment",
+              "host": ["{{local}}"],
+              "path": ["payments", "razorpay", "verify-payment"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reporters",
+      "item": [
+        {
+          "name": "Get All Reporters",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{local}}/api/reporters",
+              "host": ["{{local}}"],
+              "path": ["api", "reporters"]
+            }
+          }
+        },
+        {
+          "name": "Create Reporter Profile",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Reporter Name\",\n  \"phone\": \"9876543210\",\n  \"email\": \"reporter@example.com\",\n  \"level\": \"REPORTER\",\n  \"countryId\": 1,\n  \"stateId\": 1,\n  \"districtId\": 1,\n  \"constituencyId\": 1,\n  \"mandalId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{local}}/api/reporters",
+              "host": ["{{local}}"],
+              "path": ["api", "reporters"]
+            }
+          }
+        },
+        {
+          "name": "Get Reporter by ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{local}}/api/reporters/:id",
+              "host": ["{{local}}"],
+              "path": ["api", "reporters", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Articles",
+      "item": [
+        {
+          "name": "Create Article",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Breaking News: Important Update\",\n  \"content\": \"This is the detailed content of the news article...\",\n  \"languageCode\": \"en\",\n  \"metaDescription\": \"Important news update about recent developments\",\n  \"metaTitle\": \"Breaking News Update\",\n  \"keywords\": [\"politics\", \"breaking\", \"local\"],\n  \"countryId\": 1,\n  \"stateId\": 1,\n  \"districtId\": 1,\n  \"constituencyId\": 1,\n  \"mandalId\": 1,\n  \"imageUrl\": \"https://example.com/image.jpg\",\n  \"isBreaking\": false\n}"
+            },
+            "url": {
+              "raw": "{{local}}/api/articles",
+              "host": ["{{local}}"],
+              "path": ["api", "articles"]
+            }
+          }
+        },
+        {
+          "name": "Get All Articles",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{local}}/api/articles?language=en&state=telangana",
+              "host": ["{{local}}"],
+              "path": ["api", "articles"],
+              "query": [
+                {
+                  "key": "language",
+                  "value": "en"
+                },
+                {
+                  "key": "state",
+                  "value": "telangana"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Locations",
+      "item": [
+        {
+          "name": "Get All Countries",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{local}}/api/locations/countries",
+              "host": ["{{local}}"],
+              "path": ["api", "locations", "countries"]
+            }
+          }
+        },
+        {
+          "name": "Get All States",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{local}}/api/locations/states",
+              "host": ["{{local}}"],
+              "path": ["api", "locations", "states"]
+            }
+          }
+        },
+        {
+          "name": "Get States by Country",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{local}}/api/locations/countries/:countryId/states",
+              "host": ["{{local}}"],
+              "path": ["api", "locations", "countries", ":countryId", "states"],
+              "variable": [
+                {
+                  "key": "countryId",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

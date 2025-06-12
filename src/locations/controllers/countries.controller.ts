@@ -19,9 +19,22 @@ import { RolesGuard } from "../../auth/roles.guard";
 import { Roles } from "../../auth/roles.decorator";
 import { Role } from "@prisma/client";
 import { IResponse } from "../../types/index";
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBody,
+  ApiBearerAuth,
+  ApiParam,
+  ApiBadRequestResponse,
+  ApiUnauthorizedResponse,
+  ApiNotFoundResponse,
+} from "@nestjs/swagger";
 
+@ApiTags("🌍 Locations")
 @Controller("api/locations/countries")
 @UseGuards(JwtAuthGuard)
+@ApiBearerAuth("JWT-auth")
 export class CountriesController {
   constructor(private readonly countriesService: CountriesService) {}
 
@@ -34,6 +47,40 @@ export class CountriesController {
   }
 
   @Get()
+  @ApiOperation({
+    summary: "Get all countries",
+    description: "Retrieve list of all countries in the system.",
+  })
+  @ApiResponse({
+    status: 200,
+    description: "Countries retrieved successfully",
+    schema: {
+      type: "object",
+      properties: {
+        success: { type: "boolean", example: true },
+        statusCode: { type: "number", example: 200 },
+        message: {
+          type: "string",
+          example: "Countries retrieved successfully",
+        },
+        data: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              id: { type: "number", example: 1 },
+              name: { type: "string", example: "India" },
+              code: { type: "string", example: "IN" },
+              createdAt: { type: "string", example: "2024-01-01T00:00:00Z" },
+            },
+          },
+        },
+      },
+    },
+  })
+  @ApiUnauthorizedResponse({
+    description: "Invalid or missing JWT token",
+  })
   async findAll(): Promise<IResponse> {
     return this.countriesService.findAll();
   }
